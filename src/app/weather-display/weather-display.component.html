@@ -1,0 +1,26 @@
+@if (currentWeather$ | async; as weather) {
+<div class="container">
+  <div class="section">
+    <div>
+      <span>{{ weather.city }}</span
+      >.
+      <span>{{ weather.country }}</span>
+    </div>
+    <div>
+      <img
+        style="zoom: 175%; margin-bottom: 32px"
+        [src]="weather.image"
+        [alt]="weather.description"
+      />
+    </div>
+  </div>
+  <div class="section align-end">
+    <p class="mat-h4">{{ weather.date | date : "EEEE" }}</p>
+    <p class="mat-h4">
+      {{ weather.date | date : "MMM d" }}{{ getOrdinal(weather.date) }}
+    </p>
+    <p class="mat-headline-2">{{ weather.temperature | number : "1.0-0" }} ℉</p>
+  </div>
+</div>
+<div class="center">{{ weather.description }}</div>
+}

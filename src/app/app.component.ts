@@ -4,6 +4,10 @@ import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { CitySearchComponent } from './city-search/city-search.component';
+import { MatCardModule } from '@angular/material/card';
+import { WeatherDisplayComponent } from './weather-display/weather-display.component';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +18,10 @@ import { MatDividerModule } from '@angular/material/divider';
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
+    MatToolbarModule,
+    MatCardModule,
+    CitySearchComponent,
+    WeatherDisplayComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
