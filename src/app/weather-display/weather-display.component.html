@@ -19,8 +19,20 @@
     <p class="mat-h4">
       {{ weather.date | date : "MMM d" }}{{ getOrdinal(weather.date) }}
     </p>
-    <p class="mat-headline-2">{{ weather.temperature | number : "1.0-0" }} ℉</p>
+    <p class="mat-headline-2">
+      {{
+        weather.temperature
+          | fahrenheitToCelcius : isFahrenheit
+          | number : "1.0-0"
+      }}
+      {{ degreesCagegory.abbr }}
+    </p>
   </div>
 </div>
 <div class="center">{{ weather.description }}</div>
+<div class="center padding">
+  <mat-slide-toggle [(ngModel)]="isFahrenheit">{{
+    degreesCagegory.description
+  }}</mat-slide-toggle>
+</div>
 }
