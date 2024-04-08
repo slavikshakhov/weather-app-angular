@@ -1,1 +1,18 @@
-root
+<mat-toolbar color="primary">
+  <span>LocalCast Weather</span>
+</mat-toolbar>
+<div>
+  <div class="center padding mat-h1">Your city, your forcast right now!</div>
+  <div class="center padding">
+    <app-city-search></app-city-search>
+  </div>
+
+  <mat-card class="card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Current Weather</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <app-weather-display></app-weather-display>
+    </mat-card-content>
+  </mat-card>
+</div>
