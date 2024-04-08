@@ -4,3 +4,8 @@
   <mat-icon matPrefix fontIcon="search"></mat-icon>
   <mat-hint>Specify country code like New York, US </mat-hint>
 </mat-form-field>
+@if(errors && search.touched){ @for (key of errors | objectToKeys; track $index)
+{
+<p>{{ key | json }}</p>
+<mat-error>{{ errorsConfig[key] }}</mat-error>
+} }
