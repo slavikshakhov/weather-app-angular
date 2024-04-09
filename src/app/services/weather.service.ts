@@ -21,11 +21,20 @@ export interface ICurrentWeatherData {
   dt: number;
   name: string;
 }
+export interface IWeatherService {
+  readonly currentWeather$: BehaviorSubject<ICurrentWeather>;
+  getCurrentWeather(
+    city: string,
+    countryCode?: string
+  ): Observable<ICurrentWeather>;
+
+  updateCurrentWeather(city: string, countryCode?: string): void;
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class WeatherService {
+export class WeatherService implements IWeatherService {
   readonly currentWeather$ = new BehaviorSubject<ICurrentWeather>({
     city: '--',
     country: '--',
