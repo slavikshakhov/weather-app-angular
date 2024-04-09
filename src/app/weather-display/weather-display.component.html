@@ -1,27 +1,27 @@
-@if (currentWeather$ | async; as weather) {
+@if (currentWeather) {
 <div class="container">
   <div class="section">
     <div>
-      <span>{{ weather.city }}</span
+      <span>{{ currentWeather.city }}</span
       >.
-      <span>{{ weather.country }}</span>
+      <span>{{ currentWeather.country }}</span>
     </div>
     <div>
       <img
         style="zoom: 175%; margin-bottom: 32px"
-        [src]="weather.image"
-        [alt]="weather.description"
+        [src]="currentWeather.image"
+        [alt]="currentWeather.description"
       />
     </div>
   </div>
   <div class="section align-end">
-    <p class="mat-h4">{{ weather.date | date : "EEEE" }}</p>
+    <p class="mat-h4">{{ currentWeather.date | date : "EEEE" }}</p>
     <p class="mat-h4">
-      {{ weather.date | date : "MMM d" }}{{ getOrdinal(weather.date) }}
+      {{ currentWeather.date | date : "MMM d" }}{{ getOrdinal(currentWeather.date) }}
     </p>
     <p class="mat-headline-2">
       {{
-        weather.temperature
+        currentWeather.temperature
           | fahrenheitToCelcius : isFahrenheit
           | number : "1.0-0"
       }}
@@ -29,7 +29,7 @@
     </p>
   </div>
 </div>
-<div class="center">{{ weather.description }}</div>
+<div class="center">{{ currentWeather.description }}</div>
 <div class="center padding">
   <mat-slide-toggle [(ngModel)]="isFahrenheit">{{
     degreesCagegory.description

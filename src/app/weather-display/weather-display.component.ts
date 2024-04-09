@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { WeatherService } from '../services/weather.service';
 import { Observable } from 'rxjs';
 import { ICurrentWeather } from '../interfaces/icurrent-weather';
@@ -22,11 +22,14 @@ import { FahrenheitToCelciusPipe } from '../fahrenheit-to-celcius.pipe';
   styleUrl: './weather-display.component.scss',
 })
 export class WeatherDisplayComponent {
-  currentWeather$: Observable<ICurrentWeather>;
+  currentWeather: ICurrentWeather | null = null
   isFahrenheit: boolean = true;
 
   constructor(private weatherService: WeatherService) {
-    this.currentWeather$ = this.weatherService.currentWeather$;
+    effect(() => {
+      
+      this.currentWeather = this.weatherService.currentWeatherSignal();
+    });
   }
   get degreesCagegory() {
     return this.isFahrenheit

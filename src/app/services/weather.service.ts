@@ -1,5 +1,12 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, first, map, switchMap } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import {
+  BehaviorSubject,
+  Observable,
+  first,
+  firstValueFrom,
+  map,
+  switchMap,
+} from 'rxjs';
 import { ICurrentWeather } from '../interfaces/icurrent-weather';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
@@ -23,32 +30,48 @@ export interface ICurrentWeatherData {
   name: string;
 }
 export interface IWeatherService {
-  readonly currentWeather$: BehaviorSubject<ICurrentWeather>;
   getCurrentWeather(
     city: string,
-    countryCode?: string
+    country?: string
+  ): Observable<ICurrentWeather>;
+  getCurrentWeatherByCoords(
+    coords: GeolocationCoordinates
   ): Observable<ICurrentWeather>;
 
-  updateCurrentWeather(city: string, countryCode?: string): void;
+  updateCurrentWeatherSignal(searchText: string, country?: string): void;
 }
+export const defaultWeather: ICurrentWeather = {
+  city: '--',
+  country: '--',
+  date: Date.now(),
+  image: '',
+  temperature: 0,
+  description: '',
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class WeatherService implements IWeatherService {
-  readonly currentWeather$ = new BehaviorSubject<ICurrentWeather>({
-    city: '--',
-    country: '--',
-    date: Date.now(),
-    image: '',
-    temperature: 0,
-    description: '',
-  });
+  readonly currentWeatherSignal = signal(defaultWeather);
   constructor(
     private http: HttpClient,
     private postalCodeService: PostalCodeService
-  ) {
-    this.currentWeather$.subscribe((weather) => console.log({ weather }));
+  ) {}
+  
+  async updateCurrentWeatherSignal(
+    searchText: string,
+    country?: string
+  ): Promise<void> {
+    this.currentWeatherSignal.set(
+      await this.getCurrentWeatherAsPromise(searchText, country)
+    );
+  }
+  getCurrentWeatherAsPromise(
+    searchText: string,
+    country?: string
+  ): Promise<ICurrentWeather> {
+    return firstValueFrom(this.getCurrentWeather(searchText, country));
   }
 
   getCurrentWeather(
@@ -74,7 +97,6 @@ export class WeatherService implements IWeatherService {
       })
     );
   }
-
   getCurrentWeatherByCoords(
     coords: GeolocationCoordinates
   ): Observable<ICurrentWeather> {
@@ -111,10 +133,5 @@ export class WeatherService implements IWeatherService {
 
   private convertKelvinToFahrenheit(kelvin: number): number {
     return (kelvin * 9) / 5 - 459.67;
-  }
-  updateCurrentWeather(city: string, countryCode?: string) {
-    this.getCurrentWeather(city, countryCode)
-      .pipe(first())
-      .subscribe((weather) => this.currentWeather$.next(weather));
   }
 }
