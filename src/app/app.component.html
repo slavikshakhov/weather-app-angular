@@ -1,5 +1,16 @@
 <mat-toolbar color="primary">
   <span>LocalCast Weather</span>
+  <div class="right-toolbar">
+    <mat-icon class="margin10">brightness_5</mat-icon>
+    <mat-slide-toggle
+      class="margin10"
+      color="warn"
+      data-testid="darkmode-toggle"
+      [checked]="toggleState()"
+      (change)="toggleState.set($event.checked)"
+    ></mat-slide-toggle>
+    <mat-icon class="margin10">bedtime</mat-icon>
+  </div>
 </mat-toolbar>
 <div>
   <div class="center padding mat-h1">Your city, your forcast right now!</div>

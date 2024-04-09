@@ -3,3 +3,15 @@
   margin: auto;
   margin-top: 50px;
 }
+mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 30px;
+}
+.right-toolbar {
+  display: flex;
+  width: 100px;
+  align-items: center;
+  justify-content: space-between;
+}

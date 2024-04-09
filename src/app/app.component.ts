@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,6 +8,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CitySearchComponent } from './city-search/city-search.component';
 import { MatCardModule } from '@angular/material/card';
 import { WeatherDisplayComponent } from './weather-display/weather-display.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+const darkClassName = 'dark-theme';
 
 @Component({
   selector: 'app-root',
@@ -21,11 +24,23 @@ import { WeatherDisplayComponent } from './weather-display/weather-display.compo
     MatToolbarModule,
     MatCardModule,
     CitySearchComponent,
-    WeatherDisplayComponent
+    WeatherDisplayComponent,
+    MatSlideToggleModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
   title = 'weather-app';
+  readonly toggleState = signal(localStorage.getItem(darkClassName) === 'true');
+
+  constructor() {
+    effect(() => {
+      localStorage.setItem(darkClassName, this.toggleState().toString());
+      document.documentElement.classList.toggle(
+        darkClassName,
+        this.toggleState()
+      );
+    });
+  }
 }
