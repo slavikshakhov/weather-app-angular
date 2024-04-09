@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, first, map } from 'rxjs';
+import { BehaviorSubject, Observable, first, map, switchMap } from 'rxjs';
 import { ICurrentWeather } from '../interfaces/icurrent-weather';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { PostalCodeService, defaultPostalCode } from './postal-code.service';
 
 export interface ICurrentWeatherData {
   // exported to support unit testing
@@ -21,11 +22,20 @@ export interface ICurrentWeatherData {
   dt: number;
   name: string;
 }
+export interface IWeatherService {
+  readonly currentWeather$: BehaviorSubject<ICurrentWeather>;
+  getCurrentWeather(
+    city: string,
+    countryCode?: string
+  ): Observable<ICurrentWeather>;
+
+  updateCurrentWeather(city: string, countryCode?: string): void;
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class WeatherService {
+export class WeatherService implements IWeatherService {
   readonly currentWeather$ = new BehaviorSubject<ICurrentWeather>({
     city: '--',
     country: '--',
@@ -34,7 +44,10 @@ export class WeatherService {
     temperature: 0,
     description: '',
   });
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private postalCodeService: PostalCodeService
+  ) {
     this.currentWeather$.subscribe((weather) => console.log({ weather }));
   }
 
@@ -43,10 +56,32 @@ export class WeatherService {
     countryCode?: string
   ): Observable<ICurrentWeather> {
     console.log({ city, countryCode });
-    const uriParams = new HttpParams().set(
-      'q',
-      countryCode ? `${city},${countryCode}` : city
+    return this.postalCodeService.resolvePostalCode(city).pipe(
+      switchMap((postalCode) => {
+        console.log({ postalCode });
+        if (postalCode && postalCode !== defaultPostalCode) {
+          return this.getCurrentWeatherByCoords({
+            latitude: postalCode.lat,
+            longitude: postalCode.lng,
+          } as GeolocationCoordinates);
+        } else {
+          const uriParams = new HttpParams().set(
+            'q',
+            countryCode ? `${city},${countryCode}` : city
+          );
+          return this.getCurrentWeatherHelper(uriParams);
+        }
+      })
     );
+  }
+
+  getCurrentWeatherByCoords(
+    coords: GeolocationCoordinates
+  ): Observable<ICurrentWeather> {
+    const uriParams = new HttpParams()
+      .set('lat', coords.latitude.toString())
+      .set('lon', coords.longitude.toString());
+    console.log({ uriParams });
     return this.getCurrentWeatherHelper(uriParams);
   }
   private getCurrentWeatherHelper(
