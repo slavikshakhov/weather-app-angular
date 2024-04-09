@@ -52,11 +52,10 @@ export class WeatherService implements IWeatherService {
   }
 
   getCurrentWeather(
-    city: string,
+    cityOrZipCode: string,
     countryCode?: string
   ): Observable<ICurrentWeather> {
-    console.log({ city, countryCode });
-    return this.postalCodeService.resolvePostalCode(city).pipe(
+    return this.postalCodeService.resolvePostalCode(cityOrZipCode).pipe(
       switchMap((postalCode) => {
         console.log({ postalCode });
         if (postalCode && postalCode !== defaultPostalCode) {
@@ -67,7 +66,7 @@ export class WeatherService implements IWeatherService {
         } else {
           const uriParams = new HttpParams().set(
             'q',
-            countryCode ? `${city},${countryCode}` : city
+            countryCode ? `${cityOrZipCode},${countryCode}` : cityOrZipCode
           );
           return this.getCurrentWeatherHelper(uriParams);
         }
